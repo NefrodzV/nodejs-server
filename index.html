@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="./style.css" type="text/css">
+</head>
+<body>
+    <header>
+        <navigation>
+            <ul class="nav-list">
+                <li class="nav-item active"><a href="http://localhost:8080/">Home</a></li>
+                <li class="nav-item"><a href="http://localhost:8080/about">About</a></li>
+                <li class="nav-item"><a href="http://localhost:8080/contact-me">Contact Me</a></li>
+            </ul>
+        </navigation>
+    </header>
+
+    <h1>Home</h1>
+    <h2>Setting a server with Node JS</h2>
+    <p>This is a project to learn to set up server requests and responses manually with Node JS. The example of how this was set up is described here <a href="https://nodejs.org/api/synopsis.html">Node JS Documents</a>
+    <ol>
+        <li><p>We need to import the File System Operations to read the files we will send and HTTP interface to set up the server.</p>
+            <pre>
+                <code>
+                    const http = require('node:http');
+                    const fs = require('fs')
+                </code>
+            </pre>
+        </li>
+        <li><p>Secondly, we create the server instance with the HTTP interface and listen to the updates in the port and hostname that we desire</p>
+            <pre>
+                <code>
+                    const http = require('node:http');
+                    const fs = require('fs')
+                    const port = 8080
+                    const hostname = "localhost"
+                    const server = http.createServer((request, response) => {})
+                    server.listen(port, hostname, () => {
+                        console.log(`Server running at http://${hostname}:${port}/`);
+                      }); 
+                </code>
+            </pre>
+        </li>
+        <li>Thirdly, we handle the user requests in the createServer() callback
+            <pre>
+                <code>
+                    const http = require('node:http');
+                    const fs = require('fs')
+                    const port = 8080
+                    const hostname = "localhost"
+                    const server = http.createServer((request, response) => {
+                        // We create conditions for the request made by the user and send the pertaining file data. If the url is not in conditions render the error page template.
+                        switch(request.url) {
+                            case '/': {
+                              response.writeHead(200 ,{'Content-Type': 'text/html'})
+                              fs.readFile('./index.html', (err,data) => {
+                                if(err) {
+                                  throw new Error("[FS] Reading file error " + err)
+                                }
+                                response.end(data)
+                              })
+                              break
+                            }
+                        
+                            case '/about': {
+                              response.writeHead(200, {"Content-Type": "text/html"})
+                              fs.readFile("./about.html", (err, data) => {
+                                if(err) {
+                                  throw new Error("[FS] Reading file error " + err)
+                                }
+                                response.end(data)
+                              })
+                              break
+                            }
+                        
+                            case '/contact-me': {
+                              response.writeHead(200, {"Content-Type": "text/html"})
+                              fs.readFile('./contact-me.html', (err, data) => {
+                                if(err) {
+                                  throw new Error("[FS] Reading file error " + err)
+                                }
+                                response.end(data)
+                              })
+                              break
+                            }
+                        
+                            // If we link a style file in a html file the browser will request the file to the server so we must handle that
+                            case "/style.css": {
+                              response.writeHead(200, {'Content-Type': 'text/css'})
+                              fs.readFile('./style.css', (err, data) => {
+                                  if(err) {
+                                    throw new Error("[FS] Reading file error " + err)
+                                  }
+                                  response.end(data)
+                              })
+                              break
+                            }
+                        
+                            default: {
+                              console.log("Error page sending")
+                              response.writeHead(404 ,{'Content-Type': 'text/html'})
+                              fs.readFile('./404.html', (err, data) => {
+                                if(err) {
+                                  throw new Error("[FS] Reading file error " + err)
+                                }
+                                response.end(data)
+                              })
+                            }
+                          }
+
+                    })
+                    server.listen(port, hostname, () => {
+                        console.log(`Server running at http://${hostname}:${port}/`);
+                      }); 
+                </code>
+            </pre>
+        </li>
+    </ol>
+</body>
+</html>
